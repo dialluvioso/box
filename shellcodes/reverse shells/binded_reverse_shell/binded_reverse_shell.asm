@@ -1,7 +1,7 @@
 [BITS 64]
 global _start
 
-IP      equ 0x81b8a8c0
+IP       equ 0x81b8a8c0
 DPORT    equ 0x5c11
 
 BPORT    equ 0x5c11
