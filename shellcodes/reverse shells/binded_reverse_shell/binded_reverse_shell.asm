@@ -17,7 +17,6 @@ SOCK_STREAM equ 0x1
 section .text
 _start:
     create_socket:
-        xor rdx, rdx
         push SOCK_STREAM
         pop rsi
         push AF_INET
